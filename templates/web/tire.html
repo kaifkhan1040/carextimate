@@ -1,0 +1,131 @@
+{% extends "web/basic.html" %}
+{% load static %}
+{% block style %}
+{% endblock %}
+{% block content %}
+<section class="hero-section2 position-relative">
+    <img src="{% static 'image/banner/for tyre size.png' %}" alt="ESP Safety" class="hero-image2">
+    
+    <div class="hero-text2">
+      Compare Tyres Before Buying
+    </div>
+  </section>
+  <style>
+    .hero-section2 {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  overflow: hidden;
+  }
+  
+  .hero-image2 {
+  width: 100%;
+  height: 450px;
+  object-fit: cover;
+  }
+  
+  .hero-text2 {
+  position: absolute;
+  top: 2%;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgb(251, 8, 8);
+  padding: 6px 12px;
+  font-size: 30px;
+  font-weight: bold;
+  white-space: nowrap;
+  text-align: center;
+  }
+  
+  /* Responsive adjustments */
+  @media screen and (max-width: 768px) {
+  .hero-text2 {
+  font-size: 20px;
+  top: 3%;
+  padding: 4px 8px;
+  }
+  .hero-image2{
+  height: 400px;
+  }
+  }
+  
+  @media screen and (max-width: 480px) {
+  .hero-text2 {
+  font-size: 16px;
+  top: 4%;
+  }
+  .hero-image2{
+  height: 300px;
+  }
+  
+  
+  }
+  
+  .hero-subtext {
+  text-align: center;
+  margin-top: 20px;
+  padding: 0 15px;
+  }
+  
+  .hero-heading {
+  color: rgb(251, 8, 8);
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 10px;
+  }
+  
+  .hero-description {
+  color: #333;
+  font-size: 16px;
+  max-width: 800px;
+  margin: 0 auto 20px;
+  }
+  
+  .hero-button {
+  padding: 10px 24px;
+  border: 2px solid rgb(251, 8, 8);
+  background-color: transparent;
+  color: rgb(251, 8, 8);
+  font-weight: bold;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  }
+  
+  .hero-button:hover {
+  background-color: rgb(251, 8, 8);
+  color: white;
+  }
+  
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+  .hero-heading {
+  font-size: 20px;
+  }
+  
+  .hero-description {
+  font-size: 14px;
+  }
+  
+  .hero-button {
+  padding: 8px 20px;
+  font-size: 14px;
+  }
+  }
+  
+  @media screen and (max-width: 480px) {
+  .hero-heading {
+  font-size: 18px;
+  }
+  
+  .hero-description {
+  font-size: 13px;
+  }
+  
+  .hero-button {
+  padding: 6px 18px;
+  font-size: 13px;
+  }
+  }
+  </style>
+{% endblock %}

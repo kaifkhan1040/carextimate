@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>3D Car Banner</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    .banner-container {
+      perspective: 1000px;
+    }
+
+    .banner {
+      width: 700px;
+      height: 400px;
+      background: linear-gradient(135deg, #1f1f1f, #292929);
+      border-radius: 20px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s ease;
+      transform-style: preserve-3d;
+      position: relative;
+    }
+
+    .car-image {
+      width: 500px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotateY(0deg);
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .banner:hover {
+      transform: rotateY(5deg) rotateX(5deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="banner-container">
+    <div class="banner" id="banner">
+      <img src="https://i.imgur.com/VYg6xgS.png" alt="Car" class="car-image" id="car">
+    </div>
+  </div>
+
+  <script>
+    const banner = document.getElementById('banner');
+    const car = document.getElementById('car');
+
+    banner.addEventListener('mousemove', (e) => {
+      const { offsetX, offsetY } = e;
+      const centerX = banner.offsetWidth / 2;
+      const centerY = banner.offsetHeight / 2;
+
+      const rotateX = ((offsetY - centerY) / 20).toFixed(2);
+      const rotateY = ((centerX - offsetX) / 20).toFixed(2);
+
+      banner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      car.style.transform = `translate(-50%, -50%) rotateY(${rotateY * 2}deg)`;
+    });
+
+    banner.addEventListener('mouseleave', () => {
+      banner.style.transform = `rotateX(0deg) rotateY(0deg)`;
+      car.style.transform = `translate(-50%, -50%) rotateY(0deg)`;
+    });
+  </script>
+</body>
+</html>

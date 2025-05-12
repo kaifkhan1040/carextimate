@@ -1,0 +1,786 @@
+{% extends "web/basic.html" %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/forms/select/select2.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/forms/wizard/bs-stepper.min.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/vendors.min.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/forms/select/select2.min.css' %}">
+<!-- END: Vendor CSS-->
+
+<!-- BEGIN: Theme CSS-->
+<!-- <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/bootstrap.css' %}"> -->
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/bootstrap-extended.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/colors.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/components.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/themes/dark-layout.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/themes/bordered-layout.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/themes/semi-dark-layout.css' %}">
+
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/plugins/forms/form-validation.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/plugins/forms/form-wizard.css' %}">
+{% endblock %}
+{% block content %}
+<section class="hero-section2 position-relative">
+  <img src="{% static 'image/banner/2.png' %}" alt="ESP Safety" class="hero-image2">
+  
+  <div class="hero-text2">
+    GET FREE CAR REPAIR COST ESTIMATES 
+  </div>
+  <div class="hero-subtext">
+      <h2 class="hero-heading">SELECT CAR TO CHECK ESTIMATED REPAIR COST</h2>
+      <p class="hero-description">
+        Get instant car repair cost estimates by selecting your car’s make, model, and variant.
+        Choose the repairs you need and receive a free estimated cost. Plan your car maintenance
+        with confidence and make informed decisions.
+      </p>
+    </div>
+</section>
+<style>
+  .hero-section2 {
+position: relative;
+z-index: 1;
+width: 100%;
+overflow: hidden;
+}
+
+.hero-image2 {
+width: 100%;
+height: 450px;
+object-fit: cover;
+}
+
+.hero-text2 {
+position: absolute;
+top: 2%;
+left: 50%;
+transform: translateX(-50%);
+color: rgb(251, 8, 8);
+padding: 6px 12px;
+font-size: 30px;
+font-weight: bold;
+white-space: nowrap;
+text-align: center;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+.hero-text2 {
+font-size: 20px;
+top: 3%;
+padding: 4px 8px;
+}
+.hero-image2{
+height: 400px;
+}
+}
+
+@media screen and (max-width: 480px) {
+.hero-text2 {
+font-size: 16px;
+top: 4%;
+}
+.hero-image2{
+height: 300px;
+}
+
+
+}
+
+.hero-subtext {
+text-align: center;
+margin-top: 20px;
+padding: 0 15px;
+}
+
+.hero-heading {
+color: rgb(251, 8, 8);
+font-weight: bold;
+font-size: 24px;
+margin-bottom: 10px;
+}
+
+.hero-description {
+color: #333;
+font-size: 16px;
+max-width: 800px;
+margin: 0 auto 20px;
+}
+
+.hero-button {
+padding: 10px 24px;
+border: 2px solid rgb(251, 8, 8);
+background-color: transparent;
+color: rgb(251, 8, 8);
+font-weight: bold;
+border-radius: 25px;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.hero-button:hover {
+background-color: rgb(251, 8, 8);
+color: white;
+}
+
+/* Responsive */
+@media screen and (max-width: 768px) {
+.hero-heading {
+font-size: 20px;
+}
+
+.hero-description {
+font-size: 14px;
+}
+
+.hero-button {
+padding: 8px 20px;
+font-size: 14px;
+}
+}
+
+@media screen and (max-width: 480px) {
+.hero-heading {
+font-size: 18px;
+}
+
+.hero-description {
+font-size: 13px;
+}
+
+.hero-button {
+padding: 6px 18px;
+font-size: 13px;
+}
+}
+</style>
+
+  <style>
+    .stepper {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-width: 900px;
+      margin: 30px auto;
+    }
+  
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      min-width: 100px;
+      margin-bottom: 20px;
+    }
+  
+    .circle {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+  
+    .step.active .circle {
+      background-color: #4CAF50;
+      color: #fff;
+    }
+  
+    .label {
+      margin-top: 8px;
+      color: #333;
+      font-size: 14px;
+      text-align: center;
+    }
+  
+    .line {
+      margin-top: -42px !important;
+      height: 2px;
+      background: #e0e0e0;
+      flex: 3.5;
+      z-index: 0;
+      margin: 0 -45px;
+    }
+  
+    .bs-stepper-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 10px;
+      padding: 10px 0;
+    }
+  
+    .bs-stepper-box img {
+      height: 38px;
+      width: 38px;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  
+    .bs-stepper-label {
+      text-align: center;
+      font-size: 14px;
+    }
+  
+    .step-trigger {
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    @media (max-width: 768px) {
+      .bs-stepper-header {
+        flex-direction: column;
+        align-items: center;
+      }
+  
+      .step {
+        flex: 1 0 100%;
+        margin-bottom: 10px;
+      }
+  
+      .line {
+        display: none;
+      }
+  
+      .btn-prev, .btn-next {
+        width: 100%;
+        margin: 5px 0;
+      }
+  
+      .content-header h5 {
+        font-size: 18px;
+      }
+  
+      .content-header small {
+        font-size: 13px;
+      }
+  
+      .form-group {
+        margin-bottom: 15px;
+      }
+    }
+  
+    @media (max-width: 576px) {
+      .col-md-6, .col-md-5, .col-lg-7 {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+  
+      .text-center {
+        text-align: center !important;
+      }
+  
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
+      }
+  
+      #pdf001 {
+        margin-top: 20px;
+      }
+    }
+    .custom-container {
+  max-width: 100%; 
+  margin-right: auto;
+  margin-left: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+  </style>
+  
+<section  class="py-5 bg-white" >
+  <div class="container custom-container shadow-sm rounded p-4" >
+    <div class="row g-4" >
+      <div class=" col-md-6 mb-4" >
+        <div class="bs-stepper wizard-modern modern-wizard-example">
+          <div class="bs-stepper-header">
+              <div class="step" data-target="#account-details-modern">
+                  <button type="button" class="step-trigger">
+                      <span class="bs-stepper-box">
+                          <!-- <i data-feather="file-text" class="font-medium-3"></i> -->
+                           <img src="{% static 'image/car_service/select car.jpg' %}" style="height: 38px; width: 38px;">
+                      </span>
+                      <span class="bs-stepper-label">
+                          <span class="bs-stepper-title">Select Car</span>
+                          <span class="bs-stepper-subtitle">Select Car</span>
+                      </span>
+                  </button>
+              </div>
+              <div class="line">
+                  <i data-feather="chevron-right" class="font-medium-2"></i>
+              </div>
+              <div class="step" data-target="#personal-info-modern">
+                  <button type="button" class="step-trigger">
+                      <span class="bs-stepper-box">
+                          <!-- <i data-feather="user" class="font-medium-3"></i> -->
+                          <img src="{% static 'image/car_service/select repair.jpg' %}" style="height: 38px; width: 38px;">
+                      </span>
+                      <span class="bs-stepper-label">
+                          <span class="bs-stepper-title">Select Repairs</span>
+                          <span class="bs-stepper-subtitle">Select Repairs</span>
+                      </span>
+                  </button>
+              </div>
+              <div class="line">
+                  <i data-feather="chevron-right" class="font-medium-2"></i>
+              </div>
+              <div class="step1" data-target="#address-step-modern">
+                  <button type="button" class="step-trigger">
+                      <span class="bs-stepper-box">
+                          <!-- <i data-feather="map-pin" class="font-medium-3"></i> -->
+                          <img src="{% static 'image/car_service/3.jpg' %}" style="height: 38px; width: 38px;">
+                      </span>
+                      <span class="bs-stepper-label">
+                          <span class="bs-stepper-title">Get Estimate</span>
+                          <!-- <span class="bs-stepper-subtitle">Get Estimate</span> -->
+                      </span>
+                  </button>
+              </div>
+              
+              
+          </div>
+          <div class="bs-stepper-content">
+              <div id="account-details-modern" class="content">
+                  <div class="content-header">
+                      <h5 class="mb-0">Select Car</h5>
+                      <small class="text-muted">Enter Your Car Details.</small>
+                  </div>
+                  <div class="row">
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="modern-username">Select Country</label>
+                      <select class="form-select" id="id_country" name="country" >
+                        <option value="">Select Country</option>
+                            {% for i in country %}
+                            <option value="{{i.code}}">{{i.name}}</option>
+                            {% endfor %}
+                        
+                      </select>
+                    </div>
+                      <div class="form-group col-md-6">
+                          <label class="form-label" for="modern-username">Select Car</label>
+                          <select class="form-select" id="id_company" name="can" >
+                            <option value="">Select Make</option>
+                            <!-- {% for i in car %}
+                            <option value="{{i.id}}">{{i.name}}</option>
+                            {% endfor %}
+                             -->
+                          </select>
+                      </div>
+                      
+                  </div>
+                  <div class="row mb-1">
+                    <div class="form-group col-md-6">
+                      <label class="form-label" for="modern-email">Select Model</label>
+                      <select name="model" id="subcategory-dropdown" class="form-control" >
+                        <option value="">Select Model</option>
+                      </select>
+                    </div>
+                    <div class="form-group form-password-toggle col-md-6">
+                        <label class="form-label" for="modern-password">Select Trim</label>
+                        <select name="model" id="trim-dropdown" class="form-control" >
+                          <option value="">Select Trim</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between flex-column flex-sm-row gap-2 pt-3">
+                    <!-- Previous Button -->
+                    <button class="btn btn-outline-secondary btn-prev w-100 w-sm-auto" disabled>
+                      <i data-feather="arrow-left" class="align-middle me-1"></i>
+                      <span class=" d-sm-inline">Previous</span>
+                    </button>
+
+                    <!-- Next Button -->
+                    <button id="next0001" class="btn btn-primary btn-next w-100 w-sm-auto">
+                      <span class=" d-sm-inline">Next</span>
+                      <i data-feather="arrow-right" class="align-middle ms-1"></i>
+                    </button>
+                  </div>
+
+              </div>
+              <div id="personal-info-modern" class="content">
+                  <div class="content-header">
+                      <h5 class="mb-0">Select Repair</h5>
+                      <small>Enter Repair Info.</small>
+                  </div>
+                  <div class="row mb-1" id="trimservicecat">
+                    
+                     
+                  </div>
+                 
+                  <div class="d-flex justify-content-between flex-column flex-sm-row gap-2 pt-3">
+                      <button id="pre0001" class="btn btn-primary btn-prev w-100 w-sm-auto">
+                          <i data-feather="arrow-left" class="align-middle me-1"></i>
+                          <span class="align-middle d-sm-inline-block ">Previous</span>
+                      </button>
+                      <button  onclick="downloadPDF()" class="btn btn-primary btn-next w-100 w-sm-auto">
+                          <span class="align-middle d-sm-inline-block">Get Cost</span>
+                          <!-- <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i> -->
+                      </button>
+                  </div>
+              </div>
+              <div id="address-step-modern" class="content">
+                  <div class="content-header">
+                      <h5 class="mb-0">Address</h5>
+                      <small>Enter Your Address.</small>
+                  </div>
+                  <div class="row">
+                      <div class="form-group col-md-6">
+                          <label class="form-label" for="modern-address">Address</label>
+                          <input type="text" id="modern-address" class="form-control" placeholder="98  Borough bridge Road, Birmingham" />
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label class="form-label" for="modern-landmark">Landmark</label>
+                          <input type="text" id="modern-landmark" class="form-control" placeholder="Borough bridge" />
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="form-group col-md-6">
+                          <label class="form-label" for="pincode3">Pincode</label>
+                          <input type="text" id="pincode3" class="form-control" placeholder="658921" />
+                      </div>
+                      <div class="form-group col-md-6">
+                          <label class="form-label" for="city3">City</label>
+                          <input type="text" id="city3" class="form-control" placeholder="Birmingham" />
+                      </div>
+                  </div>
+                  <div class="d-flex justify-content-between">
+                      <button class="btn btn-primary btn-prev">
+                          <i data-feather="arrow-left" class="align-middle mr-sm-25 mr-0"></i>
+                          <span class="align-middle d-sm-inline-block d-none">Previous</span>
+                      </button>
+                      <button class="btn btn-primary btn-next">
+                          <span class="align-middle d-sm-inline-block d-none">Get cost</span>
+                          <!-- <i data-feather="arrow-right" class="align-middle ml-sm-25 ml-0"></i> -->
+                      </button>
+                  </div>
+              </div>
+              
+          </div>
+        </div>
+      </div>
+      <div id="firstdiv001" class="col-md-6 p-5">
+        <div class="card p-5 text-center ">
+          <img src="{% static 'image/logo/CARTOTRUCK_LOGO_no_bg.png' %}"
+               style="width: 200px;" class="mb-2" alt="Estimate icon">
+      
+          <h4 class="p-5">Estimated Cost</h4>
+          <p class="p-5">
+            <i class="fas fa-info-circle"></i> To check estimated cost select repair services in next step
+          </p>
+        </div>
+      </div>
+
+      <div id="pdf001" class="col-md-6" >
+        <div class="card p-4 text-center">
+          <img src="{% static 'image/logo/CARTOTRUCK_LOGO_no_bg.png' %}"
+               style="width: 200px;" class="mb-2" alt="Estimate icon">
+          <h4>Estimated Repair Cost</h4>
+          <h2 id="final-cost">₹ 0 - 0</h2>
+
+          <div id="service-breakup" class="my-3"></div>
+
+          <hr>
+          <h5>Final Estimated Cost</h5>
+          <h4 id="final-cost-bottom">₹ 0 - 0</h4>
+        </div>
+      </div>
+      <div id="pdf001download" class="col-md-12 " style="display: none;" >
+        <div class="card p-4 text-center">
+          <img src="{% static 'image/logo/CARTOTRUCK_LOGO_no_bg.png' %}"
+               style="width: 200px;" class="mb-2" alt="Estimate icon">
+          <h4>Estimated Repair Cost</h4>
+          <h2 id="final-cost-download">₹ 0 - 0</h2>
+
+          <div id="service-breakup-download" class="my-3"></div>
+
+          <hr>
+          <h5>Final Estimated Cost</h5>
+          <h4 id="final-cost-bottom-download">₹ 0 - 0</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+  <script>
+$('#firstdiv001').show(); // hide first div
+$('#pdf001').hide();
+
+$('#next0001').on('click', function() {
+  // alert('222222222222');
+  $('#firstdiv001').hide(); // hide first div
+$('#pdf001').show();
+});
+$('#pre0001').on('click', function() {
+  // alert('222222222222');
+  $('#firstdiv001').show(); // hide first div
+  $('#pdf001').hide();
+});
+
+function downloadPDF() {
+    const element = document.getElementById('pdf001download');
+    element.style.display = 'block';
+    setTimeout(() => {
+    const opt = {
+      margin:       0.5,
+      filename:     'estimated_repair_cost.pdf',
+      image:        { type: 'png', quality: 0.98 },
+      html2canvas:  { scale: 2 }, // Higher scale for better quality
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+      // Hide the div again after PDF is generated
+      element.style.display = 'none';
+      location.reload();
+    });
+  }, 100);
+
+  }
+
+// get the most recent exchange rates via the "live" endpoint:
+let symbole ="";
+$('#id_country').change(function () {
+  const countryCode = $(this).val();
+  console.log('cccccccccccccc',countryCode)
+
+
+  // Existing AJAX to load models
+  $.ajax({
+    url: '{% url "customadmin:get_car" %}',
+    type: 'GET',
+    data: {
+      category_id: countryCode
+    },
+    success: function (response) {
+      let make = '<option value="">Select model</option>';
+      let options = '<option value="">Select Make</option>';
+      let trim_options = '<option value="">Select Trim</option>';
+      symbole=response.symbole
+     
+      response.subcategories.forEach(function (sub) {
+        let selected = '';
+        {% if saved_model_id %}
+        if (sub.id === {{ saved_model_id }}) {
+          selected = 'selected';
+        }
+        {% endif %}
+        options += `<option value="${sub.id}" ${selected}>${sub.name}</option>`;
+      });
+      $('#subcategory-dropdown').html(make);
+      $('#trim-dropdown').html(trim_options);
+      $('#id_company').html(options);
+    }
+  });
+});
+{% if saved_model_id %}
+$(document).ready(function () {
+$('#id_country').trigger('change');
+});
+{% endif %}
+
+
+    $('#id_company').change(function () {
+const companyId = $(this).val();
+console.log('=====================',symbole)
+
+$.ajax({
+url: '{% url "customadmin:get_model" %}',
+type: 'GET',
+data: {
+  category_id: companyId
+},
+success: function (response) {
+  let options = '<option value="">Select model</option>';
+  let trim_options = '<option value="">Select Trim</option>';
+  response.subcategories.forEach(function (sub) {
+    let selected = '';
+    {% if saved_model_id %}
+      if (sub.id === {{ saved_model_id }}) {
+        selected = 'selected';
+      }
+    {% endif %}
+    options += `<option value="${sub.id}" ${selected}>${sub.name}</option>`;
+  });
+  $('#subcategory-dropdown').html(options);
+  $('#trim-dropdown').html(trim_options);
+}
+});
+});
+{% if saved_model_id %}
+$(document).ready(function () {
+$('#id_company').trigger('change');
+});
+{% endif %}
+
+$(document).ready(function() {
+  $('.align-middle.d-sm-inline-block.d-none').click(function() {
+    $('.col-md-5.text-center').hide(); // hide first div
+    $('.col-md-6.text-center').show(); // show second div
+  });
+});
+
+
+$('#subcategory-dropdown').change(function () {
+const companyId = $(this).val();
+
+$.ajax({
+url: '{% url "customadmin:get_trim" %}',
+type: 'GET',
+data: {
+  category_id: companyId
+},
+success: function (response) {
+  let options = '<option value="">Select Trim</option>';
+  response.subcategories.forEach(function (sub) {
+    let selected = '';
+    {% if saved_model_id %}
+      if (sub.id === {{ saved_model_id }}) {
+        selected = 'selected';
+      }
+    {% endif %}
+    options += `<option value="${sub.id}" ${selected}>${sub.name}</option>`;
+  });
+  $('#trim-dropdown').html(options);
+}
+});
+});
+{% if saved_model_id %}
+$(document).ready(function () {
+$('#subcategory-dropdown').trigger('change');
+});
+{% endif %}
+
+
+$(document).ready(function() {
+  $('#trim-dropdown').change(function() {
+    var trimId = $(this).val();
+    console.log('hi how r u');
+    if (trimId) {
+      $.ajax({
+        url: '{% url "customadmin:get_trim_service" %}', // Make sure the URL is correct!
+        data: { trim_id: trimId },
+        success: function(response) {
+          var categories = response.trimdata;
+          var html = '';
+
+          categories.forEach(function(category) {
+            html += `
+              <div class="form-group col-md-12 my-2">
+                <i><img src="${category.image}" alt="${category.name}" style="max-width: 60px;"></i>
+              <label>${category.name}</label>
+              <select class="select2 form-control service-item-dropdown" multiple data-category="${category.name}">
+          `;
+
+            category.items.forEach(function(item) {
+              console.log(item.name,item.min_price);
+              html += `<option value="${item.name}" data-min-price="${item.min_price}" data-max-price="${item.max_price}">${item.name}</option>`;
+              });
+
+            html += `
+                </select>
+              </div>
+            `;
+          });
+
+          $('#trimservicecat').html(html);
+          $('.select2').select2();
+          $('.service-item-dropdown').on('change', calculateEstimate);
+        },
+        error: function() {
+          alert('Something went wrong. Please try again.');
+        }
+      });
+    } else {
+      $('#trimservicecat').html('kkk');
+    }
+  });
+});
+
+
+function calculateEstimate() {
+  var grandMin = 0;
+  var grandMax = 0;
+  var breakdownHTML = '';
+
+  $('.service-item-dropdown').each(function () {
+    var categoryName = $(this).data('category');
+    var selectedOptions = $(this).find('option:selected');
+
+    if (selectedOptions.length > 0) {
+      var categoryMin = 0;
+      var categoryMax = 0;
+      var itemListHTML = '';
+
+      selectedOptions.each(function () {
+        var minPrice = parseFloat($(this).data('min-price')) || 0;
+        var maxPrice = parseFloat($(this).data('max-price')) || 0;
+
+        // var minPrice = (minPriceINR * selectedRate).toFixed(2);
+        // var maxPrice = (maxPriceINR * selectedRate).toFixed(2);
+        var itemName = $(this).val();
+
+        categoryMin += parseFloat(minPrice);
+        categoryMax += parseFloat(maxPrice);
+
+        itemListHTML += `
+          <div class="d-flex justify-content-between px-3">
+            <div>${itemName}</div>
+            <div>${symbole} ${minPrice} - ${symbole} ${maxPrice}</div>
+          </div>
+        `;
+      });
+
+      breakdownHTML += `
+        <div class="border rounded p-3 my-2">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5>${categoryName}</h5>
+            <div>${symbole} ${categoryMin.toFixed(2)} - ${symbole} ${categoryMax.toFixed(2)}</div>
+          </div>
+          <hr>
+          ${itemListHTML}
+        </div>
+      `;
+
+      grandMin += categoryMin;
+      grandMax += categoryMax;
+    }
+  });
+  
+  $('#service-breakup').html(breakdownHTML);
+  $('#final-cost').text(`${symbole} ${grandMin.toFixed(2)} - ${symbole} ${grandMax.toFixed(2)}`);
+  $('#final-cost-bottom').text(`${symbole} ${grandMin.toFixed(2)} - ${symbole} ${grandMax.toFixed(2)}`);
+  $('#service-breakup-download').html(breakdownHTML);
+  $('#final-cost-download').text(`${symbole} ${grandMin.toFixed(2)} - ${symbole} ${grandMax.toFixed(2)}`);
+  $('#final-cost-bottom-download').text(`${symbole} ${grandMin.toFixed(2)} - ${symbole} ${grandMax.toFixed(2)}`);
+}
+
+  </script>
+    
+
+    <script src="{% static 'app-assets/vendors/js/forms/wizard/bs-stepper.min.js' %}"></script>
+
+    <!-- <script src="{% static 'app-assets/vendors/js/vendors.min.js' %}"></script> -->
+    <!-- BEGIN Vendor JS-->
+    
+    <!-- BEGIN: Page Vendor JS-->
+    <script src="{% static 'app-assets/vendors/js/forms/select/select2.full.min.js' %}"></script>
+    <script src="{% static 'app-assets/js/scripts/forms/form-select2.js' %}"></script>
+    <script src="{% static 'app-assets/js/scripts/forms/form-wizard.js' %}"></script>
+
+    
+   
+{% endblock %}
+{% block scriptjs %}
+
+{% endblock %}

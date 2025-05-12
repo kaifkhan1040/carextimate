@@ -1,0 +1,312 @@
+{% extends 'customadmin/basic.html' %} 
+{% load static %}
+
+    {% block style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/forms/select/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css' %}">
+    <!-- END: Vendor CSS-->
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/plugins/forms/pickers/form-flat-pickr.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/plugins/forms/form-validation.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'app-assets/css/pages/app-user.css' %}">
+    {% endblock style %}
+</head>
+<!-- END: Head-->
+
+<!-- BEGIN: Body-->
+
+<body class="vertical-layout vertical-menu-modern  navbar-floating footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="">
+    {% block content %}
+
+
+        <div class="content-overlay"></div>
+        <div class="header-navbar-shadow"></div>
+        <div class="content-wrapper container-xxl p-0">
+            <div class="content-header row">
+            </div>
+            <div class="content-body">
+                <!-- users edit start -->
+                <section class="app-user-edit">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="tab-content">
+                                {% if messages %}
+                                {% for message in messages %}
+                                    {% if message.tags == 'error' %}
+                                <div class="alert alert-danger" role="alert">
+                                    {{message}}
+                                </div>
+                                    {% else %}
+                                <div class="alert alert-{{ message.tags }}" role="alert">
+                                    {{message}}
+                                </div>
+                                    {% endif %}
+                                {% endfor %}{% endif %}
+                                <div class="row">
+                                    <div class="col-md-7"></div>
+                                    <div class="col-md-2"></div>
+                                    <div class="col-md-3">
+                                        {% if user.is_superuser %}
+                                        {% if user1 %}
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Change password</button>
+                                        {% endif %}
+                                        {% endif %}
+                                    </div>
+                                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                          <div class="modal-content">
+                                            <form method="POST" action="/user/forgetpassword/{{user.id}}">
+                                                {% csrf_token %}
+                                            <div class="modal-header">
+                                              <h5 class="modal-title" id="exampleModalLabel">Change Password</h5>
+                                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="username">Password</label>
+                                                            <input type="password" name="reset-password-new" class="form-control" placeholder="Enter password" value="" id="username" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <div class="form-group">
+                                                            <label for="username">Confirm Password</label>
+                                                            <input type="password" name="reset-password-confirm" class="form-control" placeholder="Confirm Password" value="" id="username" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                              <button type="submit" class="btn btn-primary">Save changes</button>
+                                            </div>
+
+                                          </div>
+                                        </form>
+                                        </div>
+                                      </div>
+                                <!-- Account Tab starts -->
+                                <div class="card-header border-bottom">
+                                    <h4 class="card-title">User Details</h4>
+                                </div>
+                                <div class="card-body py-2 my-25">
+                                    <!-- header section -->
+                                    
+                                        <!-- upload and reset button -->
+                                        <form class="form-validate" method="POST" enctype="multipart/form-data">
+                                             <div class="d-flex">
+                                                <a href="#" class="me-25">
+                                                    <img src="{% if user1.image %}{{ user1.image.url }}{% else %}{% static 'app-assets/images/portrait/small/avatar-s-11.jpg' %}{% endif %}"
+                                                        id="account-upload-img" class="uploadedAvatar rounded me-50" 
+                                                        alt="profile image" height="100" width="100" />
+                                                </a>
+                                                <div class="d-flex align-items-end mt-75 ms-1">
+                                                    <div>
+                                                        {% if user.is_superuser %}
+                                                        <label for="account-upload" class="btn btn-sm btn-primary mb-75 me-75">Upload</label>
+                                                        <input type="file" name="image" id="account-upload" hidden accept="image/*" />
+                                                        <p class="mb-0">Allowed file types: png, jpg, jpeg.</p>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                <script>
+                                                     document.getElementById("account-upload").addEventListener("change", function(event) {
+                                                        const file = event.target.files[0];
+                                                        if (file) {
+                                                            const reader = new FileReader();
+                                                            reader.onload = function(e) {
+                                                                document.getElementById("account-upload-img").src = e.target.result;
+                                                            };
+                                                            reader.readAsDataURL(file);
+                                                        }
+                                                    });
+                                                </script>
+                                                <!--/ upload and reset button -->
+                                                </div></div>
+                                               
+                                                <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
+                                                        {% csrf_token %}
+                                                        <div class="row">
+                                                            <div class="col-md-4">
+                                                                <div class="form-group">
+                                                                    <label for="username">First name</label>
+                                                                    {% comment %} {{form.image}} {% endcomment %}
+                                                                {% if user.is_superuser %} {{form.first_name}}
+                                                                {% else %}
+                                                                <input type="text" name="first_name" value='{{user1.first_name}}' readonly  class="form-control" placeholder="First name" value="" id="username" />
+                                                                {% endif %}     
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="name">Last Name</label>
+                                                    {% if user.is_superuser %} {{form.last_name}}
+                                                    {% else %}
+                                                    <input type="text" name="last_name" value="{{user1.last_name}}" class="form-control" placeholder="Last Name" value="" id="name" readonly />
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="email">E-mail</label>
+                                                    {% if user.is_superuser %} {{form.email}}
+                                                    {% else %}
+                                                    <input type="text" name="last_name" value="{{user1.email}}" class="form-control" placeholder="Email" value="" id="name" readonly />
+                                                    {% endif %}
+                                                    
+                                                    {% comment %} <input type="email" name="email" required class="form-control" placeholder="" value="" id="email" /> {% endcomment %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="status">Status</label>
+                                                    {% if user.is_superuser %}
+                                                    <select name="status" class="form-control" id="status">
+                                                    {% else %}
+                                                    <select name="status" readonly class="form-control" id="status">
+                                                    {% endif %}
+                                                        <option value="1">Active</option>
+                                                        <option value="0">Inactive</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="email">designation</label>
+                                                    {% if user.is_superuser %}
+                                                    <input type="text" name="designation" {% if user1.designation %}value="{{user1.designation}}"{% endif %}required class="form-control" placeholder="designation" value="" id="email" />
+                                                    {% else %}
+                                                    <input type="text" readonly name="designation" {% if user1.designation %}value="{{user1.designation}}"{% endif %}required class="form-control" placeholder="designation" value="" id="email" />
+
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="email">salary</label>
+                                                    {% if user.is_superuser %}
+                                                    <input type="text" name="salary" {% if user1.salary %}value="{{user1.salary}}"{% endif %}required class="form-control" placeholder="salary" value="" id="email" />
+                                                    {% else %}
+                                                    <input type="text" readonly name="salary" {% if user1.salary %}value="{{user1.salary}}"{% endif %}required class="form-control" placeholder="salary" value="" id="email" />
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="email">Date of Birth</label>
+                                                    {% if user.is_superuser %}
+                                                    {{form.dob}}
+                                                    {% else %}
+                                                    <input type="date" readonly name="dob" class="form-control mb-2" id="id_dob">
+                                                    {% endif %}
+                                                    {% comment %} <input type="email" name="email" required class="form-control" placeholder="Email" value="" id="email" /> {% endcomment %}
+                                                </div>
+                                            </div><div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="email">Date of  Joning</label>
+                                                    {% if user.is_superuser %}
+                                                    {{form.doj}}
+                                                    {% else %}
+                                                    <input type="date" readonly name="doj" class="form-control mb-2" id="id_doj">
+                                                    {% endif %}
+                                                    {% comment %} <input type="email" name="email" required class="form-control" placeholder="Email" value="" id="email" /> {% endcomment %}
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    {% comment %} <label for="email">Password</label> {% endcomment %}
+                                                    {{form.password1.label}}
+                                                    {{form.password1}}
+                                                    {% comment %} <input type="text" name="password1" required class="form-control" placeholder="Email" value="" id="email" /> {% endcomment %}
+                                                </div>
+                                            </div><div class="col-md-4">
+                                                <div class="form-group">
+                                                    {% comment %} <label for="email">confirm Password</label> {% endcomment %}
+                                                    {{form.password2.label}}
+                                                    {{form.password2}}
+
+                                                    {% comment %} <input type="text" name="password2" required class="form-control" placeholder="Email" value="" id="email" /> {% endcomment %}
+                                                </div>
+                                            </div></div></div>
+                                            
+                                            
+                                            {% comment %} <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="role">Role</label>
+                                                    <select class="form-control" id="role">
+                                                        <option>Admin</option>
+                                                        <option>User</option>
+                                                        <option>Staff</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="company">Company</label>
+                                                    <input type="text" class="form-control" value="WinDon Technologies Pvt Ltd" placeholder="Company name" id="company" />
+                                                </div>
+                                            </div> {% endcomment %}
+                                           {% if user.is_superuser %}
+                                            <div class="col-12 d-flex flex-sm-row flex-column mt-2">
+                                                <button type="submit" class="btn btn-primary mb-1 mb-sm-0 mr-0 mr-sm-1">Save Changes</button>
+                                                <button type="reset" class="btn btn-outline-secondary">Reset</button>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </form>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <!-- users edit ends -->
+
+            </div>
+        </div>
+    <!-- END: Content-->
+    {% endblock content %}
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+    <script>
+        console.log('hello')
+    </script>
+
+    <!-- BEGIN Vendor JS-->
+    {% block scriptjs %}
+        
+       <!-- BEGIN: Page Vendor JS-->
+       <script href="{% static 'app-assets/vendors/js/forms/select/select2.full.min.js' %}"></script>
+       <script href="{% static 'app-assets/vendors/js/forms/validation/jquery.validate.min.js' %}"></script>
+       <script href="{% static 'app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js' %}"></script>
+       <!-- END: Page Vendor JS-->
+   
+   
+       <!-- BEGIN: Page JS-->
+       <script href="{% static 'app-assets/js/scripts/pages/app-user-edit.js' %}"></script>
+       <script href="{% static 'app-assets/js/scripts/components/components-navs.js' %}"></script>
+       <script>
+        console.log('aaaaaa');
+        
+        </script>
+       <!-- END: Page JS-->
+    {% endblock scriptjs %}
+ 
+
+    <script>
+        $(window).on('load', function() {
+            if (feather) {
+                feather.replace({
+                    width: 14,
+                    height: 14
+                });
+            }
+        })
+    </script>
+</body>
+<!-- END: Body-->
+
+</html>
