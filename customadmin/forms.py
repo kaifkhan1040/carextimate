@@ -30,11 +30,12 @@ class TyreForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['name'].widget.attrs.update({'class': 'form-control valid'})
-        self.fields['car_model'].widget.attrs.update({'class': 'form-control valid'})
-        self.fields['size'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['company'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['model'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['trim'].widget.attrs.update({'class': 'form-control valid'})
     class Meta:
         model = Tyre
-        fields = ['name', 'car_model','size']
+        fields = ['name', 'company','trim']
             
 class CarModelForm(ModelForm):
     def __init__(self, *args, **kwargs):
