@@ -47,29 +47,85 @@
                                         <div class="tab-pane active" id="account" aria-labelledby="account-tab" role="tabpanel">
                                             {% csrf_token %}
                                             <div class="row">
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="username">Name</label>
                                                         {{form.name}}
                                                         
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Country</label>
+                                                        {{form.country}}
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Car</label>
+                                                        {{form.company}}
+                                                        
+                                                    </div>
+                                                </div>
+                                               
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
                                                         <label for="username">Car Model</label>
-                                                        {{form.car_model}}
+                                                        {{form.model}}
                                                         
                                                     </div>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label for="username">Size</label>
-                                                        {{form.size}}
+                                                        <label for="username">Car Trim</label>
+                                                        {{form.trim}}
                                                         
                                                     </div>
                                                 </div>
-                                                
-                                
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Width</label>
+                                                        {{form.width}}
+                                                        
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Profile</label>
+                                                        {{form.profile}}
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Rim</label>
+                                                        {{form.rim}}
+                                                        
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Load</label>
+                                                        {{form.load}}
+                                                        
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-4">
+                                                    <div class="form-group">
+                                                        <label for="username">Speed</label>
+                                                        {{form.speed}}
+                                                        
+                                                    </div>
+                                                </div>
                                             </div>
                                             <div class="col-12 d-flex flex-sm-row flex-column mt-2">
                                                 <button type="submit" class="btn btn-primary mb-1 mb-sm-0 mr-0 mr-sm-1">Save Changes</button>

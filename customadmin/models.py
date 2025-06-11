@@ -99,10 +99,16 @@ class TrimServicePrice(models.Model):
     
   
 class Tyre(models.Model):
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, related_name='tyre_country')
     name = models.CharField(max_length=100)
     company = models.ForeignKey(CarCompany, on_delete=models.CASCADE, related_name='tyre_models')
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE, related_name='tyre')
     trim = models.ForeignKey(Trim, on_delete=models.CASCADE, related_name='tyre_trim')
-
+    width = models.FloatField()
+    profile = models.FloatField()
+    rim = models.FloatField()
+    load = models.FloatField()
+    speed = models.CharField(max_length=10)
+    
     def __str__(self):
         return f"{self.name} - {self.size}"

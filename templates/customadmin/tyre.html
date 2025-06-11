@@ -54,15 +54,23 @@
                                 <thead class="table-light">
                                     <tr>
                                         <th></th>
-                                        <th>country Name</th>
+                                        <th>Name</th>
+                                        <th>Company</th>
+                                        <th>Model</th>
+                                        <th>Trim</th>
+                                        <th>Country</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for i in countries %}
+                                    {% for i in tyre %}
                                     <tr>
                                         <td>{{forloop.counter}}</td>
                                         <td>{{i.name}}</td>
+                                        <td>{{i.company}}</td>
+                                        <td>{{i.model}}</td>
+                                        <td>{{i.trim}}</td>
+                                        <td>{{i.country}}</td>
 
                                         <td>
                                            <a href="{% url 'customadmin:tyre_update' pk=i.id %}">

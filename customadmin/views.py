@@ -146,7 +146,6 @@ def add_trim(request,id=None):
         service_item.append(temp)
     if request.method == "POST":
         obj=None
-        
         if id:
             obj = get_object_or_404(Trim, id=id)
             form = TrimForm(request.POST,instance=obj)

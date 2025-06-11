@@ -33,9 +33,16 @@ class TyreForm(forms.ModelForm):
         self.fields['company'].widget.attrs.update({'class': 'form-control valid'})
         self.fields['model'].widget.attrs.update({'class': 'form-control valid'})
         self.fields['trim'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['country'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['width'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['profile'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['rim'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['load'].widget.attrs.update({'class': 'form-control valid'})
+        self.fields['speed'].widget.attrs.update({'class': 'form-control valid'})
     class Meta:
         model = Tyre
-        fields = ['name', 'company','trim']
+        fields = ['name', 'company','model','trim','country',
+                  'width','profile','rim','load','speed']
             
 class CarModelForm(ModelForm):
     def __init__(self, *args, **kwargs):
