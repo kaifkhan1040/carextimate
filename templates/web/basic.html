@@ -96,15 +96,15 @@
 <div class="navbar-bg">
   <nav class="navbar navbar-expand-lg navbar-light">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'web:index' %}">
-          <img src="{% if obj.image %}{{ obj.image.url }}{% else %}{% static 'image/logo/CARTOTRUCK_LOGO_no_bg.png' %}{% endif %}" alt="ESP Logo">
-        </a>
+        <!-- <a class="navbar-brand" href="{% url 'web:index' %}"> </a> -->
+          <img  class=" img-logo" src="{% if obj.image %}{{ obj.image.url }}{% else %}{% static 'image/logo/CARTOTRUCK_LOGO_no_bg.png' %}{% endif %}" alt="ESP Logo">
+       
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="navbar-collapse collapse" id="navbarNav">
           <ul class="navbar-nav ms-auto" >
-              <li class="nav-item"><a class="nav-link" href="{% url 'web:index' %}"><b>Home </b> </a></li>
+              <!-- <li class="nav-item"><a class="nav-link" href="{% url 'web:index' %}"><b>Home </b> </a></li> -->
             <li class="nav-item"><a class="nav-link" href="{% url 'web:service' %}"><b>Service</b></a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'web:tire' %}"><b>Tire</b></a></li>
           
@@ -142,6 +142,10 @@
       background-color: #0d2a57;
       color: white;
       padding: 40px 20px;
+    }
+    .img-logo {
+      height: 50px;
+      margin-right: 10px;
     }
     
     .footer-container {

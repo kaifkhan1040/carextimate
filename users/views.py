@@ -20,7 +20,7 @@ from .email import verification_mail
 
 def logout_view(request):
     logout(request)
-    return HttpResponseRedirect(reverse_lazy('web:index'))
+    return HttpResponseRedirect(reverse_lazy('web:basic'))
 
 def loginPage(request):
     if request.method == 'POST':

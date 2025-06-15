@@ -1,0 +1,165 @@
+{% extends "web/basic.html" %}
+ {% block content %}
+
+ <style>
+  .main-container{
+      background-color:rgb(244, 249, 252) ;
+  }
+  
+  .car-name{
+     margin-top: 40px;
+    margin-bottom: 50px;
+    font-weight: 600;
+    text-align: center;
+    color:red;
+  }
+  .car-container{
+    margin-top: 40px;
+    margin-bottom: 50px;
+  
+  }
+
+   .car-no{
+     margin-top: 40px;
+    margin-bottom: 50px;
+    font-weight: 600;
+    text-align: center;
+    font-size:30px;
+  }
+  .para-size{
+    font-size: 10px;
+    text-align: center;
+    margin-top:  50px;
+    margin-bottom:  50px;
+  }
+
+  .spaning{
+    color:red;
+  }
+  .spaning-2{
+    color:blue;
+    font-size: 10px;
+  }
+  .text-drop{
+    margin-top:120px;
+  }
+  .para-drop{
+    text-align: justify;
+    margin-top:50px;
+  }
+  .para-header{
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .para-subdrop{
+    font-size:14px;
+    text-align: justify;
+  }
+  .size-color{
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    color: red;
+  }
+  .span-head{
+    font-weight: 600;
+  }
+  .fa-plus{
+    margin-left: 400px;
+   
+    font-size:20px;
+    color: rgb(215, 5, 5);
+  }
+  .fa-plus:hover{
+
+    transform:rotate(360deg);
+  }
+ </style>
+ <div class="main-container">
+<div class="container car-container ">
+  <h3 class=" container col-md-6 car-name">{{tire.company}}</h3>
+
+  <div class="container col-md-5 mt-4">
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th colspan="2" class="center text-center car-no">{{tire.model}} </th>
+        </tr>
+      </thead>
+      <tbody class="w-40">
+        <tr>
+          <td>Width</td>
+          <td>{{tire.width}}</td>
+        </tr>
+         <tr>
+          <td>Profile</td>
+          <td>{{tire.profile}}</td>
+        </tr>
+         <tr>
+          <td>Load</td>
+          <td>{{tire.load}}</td>
+        </tr>
+        <tr>
+          <td>Rim</td>
+          <td>{{tire.rim}}</td>
+        </tr>
+        <tr>
+          <td>Speed</td>
+          <td>{{tire.speed}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+<p class="para-size  container col-5"><span class="spaning-2">Maruti Wagon R LXI</span>  comes with <span class="spaning "> 145/80 R13 75T </span> tyres as standard OEM fitment, ensuring optimal 
+performance, comfort, and safety. These tyres are specifically designed to match the vehicle's 
+specifications, providing a smooth and efficient driving experience.</p>
+
+</div>
+
+
+
+<div class="container  text-drop col-7">
+  <h2 class="container size-color">TYRE SIZES EXPLAINED<i class="fa-solid fa-plus"></i></h2>
+  <p class="para-drop">When it comes to tyres, understanding the various specifications is crucial for 
+optimal performance, safety, and fuel efficiency. In this guide, we'll break down 
+the key components of tyre specifications, helping you make informed 
+decisions when purchasing new tyres  . </p>
+
+<div class="para-header">
+<p class="para-subdrop"><span class="span-head">Width : </span> The tyre's width is represented by the first three digits on the sidewall. A 
+wider tyre provides better grip, but may increase road noise. </p>
+<p class="para-subdrop"><span class="span-head">Profile (Aspect Ratio) :</span>  The aspect ratio  is calculated by dividing the sidewall height 
+by the tyre width and multiplying by 100. This ratio affects the tyre's performance and 
+handling. </p>
+<p class="para-subdrop"><span class="span-head">Rim : </span> The rim size is  the diameter of the wheel rim, which may differ slightly from the 
+tyre width. Both dimensions are provided separately for accurate fitting.</p>
+<p class="para-subdrop"><span class="span-head">Speed Rating :</span>  The speed rating  indicates the maximum speed at which the tyre 
+can safely carry its load. Ratings range from Q (up to 99 mph) to Y (over 186 mph).</p>
+<p class="para-subdrop"><span class="span-head">Load Index :</span>  The load index represents  the maximum weight the tyre can carry at 
+the specified speed. Ensure the load index matches your vehicle's requirements.</p>
+<p class="para-subdrop"><span class="span-head">Extra Load (XL) :</span>  Some tyres are designed  for heavier loads and higher inflation 
+pressures, marked as Extra Load (XL) or Reinforced (RF). </p>
+<p class="para-subdrop"><span class="span-head">Runflat Tyres :</span>  Runflat tyres feature  reinforced sidewalls that support the vehicle's 
+weight after a puncture, allowing for limited driving at moderate speeds.This 
+‘Self-Supporting’ Tyre Technology is typically found on BMWs, Minis,Porsche and 
+enables you to continue your journey with a flat tyre for up to 40-50 miles at up to 50 
+miles an hour.</p>
+</div>
+</div>
+</div>
+<script>
+let plusIcon = document.querySelector('.fa-plus');
+
+plusIcon.addEventListener('click', function() {
+    let paraHeader = document.querySelector('.para-header');
+    if (paraHeader.style.display === 'none' || paraHeader.style.display === '') {
+        paraHeader.style.display = 'block';
+        plusIcon.style.transform = 'rotate(360deg)';
+    } else {
+        paraHeader.style.display = 'none';
+        plusIcon.style.transform = 'rotate(0deg)';
+    }
+});
+
+</script>
+{% endblock content %}
