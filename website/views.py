@@ -15,7 +15,6 @@ def service(request):
     def chunked(lst, n):
         return [lst[i:i+n] for i in range(0, len(lst), n)]
     category=ServiceCategory.objects.all()
-
     car_brands_grouped = chunked(car, 4)
     country=Country.objects.all()
     return render(request,'web/service.html',{'car_brands_grouped':car_brands_grouped,'car':car,
@@ -50,7 +49,7 @@ rates = load_exchange_rates()
 amount = 1000
 currency = 'EUR'
 converted = convert_currency(amount, currency, rates)
-print(f"{amount} INR = {converted:.2f} {currency}")
+# print(f"{amount} INR = {converted:.2f} {currency}")
 
 
 
