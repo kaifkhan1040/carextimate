@@ -1,18 +1,13 @@
 {% extends "web/basic.html" %}
  {% block content %}
+{% load static %}
 
  <style>
   .main-container{
       background-color:rgb(244, 249, 252) ;
   }
   
-  .car-name{
-     margin-top: 40px;
-    margin-bottom: 50px;
-    font-weight: 600;
-    text-align: center;
-    color:red;
-  }
+
   .car-container{
     margin-top: 40px;
     margin-bottom: 50px;
@@ -75,15 +70,18 @@
     transform:rotate(360deg);
   }
  </style>
+  <img src="{% static 'image/banner/for tyre size.png' %}" alt="ESP Safety" class="hero-image2 >
  <div class="main-container">
-<div class="container car-container ">
-  <h3 class=" container col-md-6 car-name">{{tire.company}}</h3>
+   
+<div class="container car-container mt-2 ">
+ 
+  <h3 class="pt-4" style="text-align: center;">{{tire.company}} {{tire.model}} {{tire.trim}}</h3>
 
   <div class="container col-md-5 mt-4">
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th colspan="2" class="center text-center car-no">{{tire.model}} </th>
+          <th colspan="2" class="center text-center car-no">{{tire.name}} </th>
         </tr>
       </thead>
       <tbody class="w-40">
