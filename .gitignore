@@ -28,6 +28,7 @@ venv/
 ENV/
 env/
 
+
 # Migrations (optional, if you want to ignore them)
 **/migrations/
 !**/migrations/__init__.py
