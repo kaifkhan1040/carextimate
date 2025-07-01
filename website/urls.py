@@ -6,4 +6,5 @@ urlpatterns = [
     path('dropdown',views.dropdown,name='dropdown'),
     path('about',views.about,name='aboutus'),
     path('tire',views.tire,name='tire'),
+    path('deepseek',views.deepseek,name='deepseek'),
 ]

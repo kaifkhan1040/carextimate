@@ -10,6 +10,12 @@ def index(request):
     car_brands_grouped = chunked(car, 4)
     return render(request,'web/index.html',{'car_brands_grouped':car_brands_grouped})
 
+def deepseek(request):
+    car=CarCompany.objects.all()
+    def chunked(lst, n):
+        return [lst[i:i+n] for i in range(0, len(lst), n)]
+    car_brands_grouped = chunked(car, 4)
+    return render(request,'web/deepseek.html',{'car_brands_grouped':car_brands_grouped})
 def dropdown(request):
     car=CarCompany.objects.all()
     def chunked(lst, n):

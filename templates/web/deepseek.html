@@ -1,0 +1,1346 @@
+{% extends "web/basic.html" %}
+{% load static %}
+ {% block content %}
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Repair Estimate | CartoCare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #f72585;
+            --accent-color: #4cc9f0;
+            --light-gray: #f8f9fa;
+            --dark-gray: #343a40;
+            --filter-bg: #f0f5ff;
+            --filter-active: #d6e4ff;
+            --success-color: #38b000;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-gray);
+            line-height: 1.6;
+        }
+        
+        .estimate-container {
+            max-width: 1000px;
+            margin: 1.5rem auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background: white;
+        }
+        
+        .estimate-header {
+            background: linear-gradient(135deg, var(--primary-color), #3a0ca3);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .estimate-body {
+            padding: 2rem;
+        }
+        
+        /* Compact vehicle filter */
+        .vehicle-filter {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+            align-items: flex-end;
+        }
+        
+        .vehicle-filter .select-container {
+            flex: 1;
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+        
+        /* Enhanced Category Cards */
+        .category-card {
+            margin-bottom: 1.5rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .category-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .category-header {
+            background-color: var(--filter-bg);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .category-header:hover, .category-header.active {
+            background-color: var(--filter-active);
+        }
+        
+        .category-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .category-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .category-content.show {
+            max-height: 5000px;
+        }
+        
+        /* Enhanced Repair Items */
+        .repair-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+            align-items: center;
+            flex-wrap: wrap;
+            transition: all 0.2s ease;
+        }
+        
+        .repair-item:hover {
+            background-color: var(--filter-bg);
+        }
+        
+        .repair-item:last-child {
+            border-bottom: none;
+        }
+        
+        .repair-price {
+            font-weight: bold;
+            min-width: 140px;
+            text-align: right;
+            margin-left: auto;
+            padding-left: 1rem;
+            color: var(--secondary-color);
+            font-size: 0.95rem;
+        }
+        
+        /* Form Check Customization */
+        .form-check {
+            padding-left: 2rem;
+            margin-bottom: 0;
+            flex: 1;
+        }
+        
+        .form-check-input {
+            width: 1.2em;
+            height: 1.2em;
+            margin-top: 0.15em;
+            margin-left: -1.5rem;
+            border: 2px solid #adb5bd;
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+        
+        .form-check-label {
+            cursor: pointer;
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+        
+        /* Selected Repairs Section */
+        .selected-repairs {
+            margin-top: 2rem;
+            border-top: 2px solid var(--primary-color);
+            padding-top: 1.5rem;
+        }
+        
+        .selected-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+            background-color: var(--filter-bg);
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+            align-items: center;
+        }
+        
+        .total-estimate {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            text-align: right;
+            background-color: var(--filter-bg);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+        
+        /* Buttons */
+        .btn-cartocare {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1.75rem;
+            font-weight: 600;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        
+        .btn-cartocare:hover {
+            background-color: #3a0ca3;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-outline-cartocare {
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            background: white;
+        }
+        
+        .btn-outline-cartocare:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        /* Improved Select Styles */
+        .select-container {
+            margin-bottom: 0;
+        }
+        
+        .select-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.9rem;
+        }
+        
+        .select-container select {
+            width: 100%;
+            padding: 0.65rem 1rem 0.65rem 2.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: white;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            color: var(--dark-gray);
+            appearance: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .select-container select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.25);
+            outline: none;
+        }
+        
+        .select-icon {
+            position: relative;
+        }
+        
+        .select-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            font-size: 1rem;
+            z-index: 1;
+        }
+        
+        /* Quote Section */
+        .quote-section {
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .quote-invoice {
+            background: white;
+            border: 1px solid #eee;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+        
+        .quote-header-invoice {
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .quote-title {
+            font-size: 1.75rem;
+            color: var(--primary-color);
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .quote-meta {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+        
+        .quote-logo {
+            font-size: 1.75rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        .quote-details {
+            display: flex;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+        
+        .quote-vehicle, .quote-summary {
+            flex: 1;
+            padding: 1.5rem;
+            min-width: 250px;
+            background-color: var(--filter-bg);
+            border-radius: 10px;
+        }
+        
+        .quote-repairs {
+            margin-top: 2rem;
+        }
+        
+        .quote-repair-category {
+            margin-bottom: 1.75rem;
+            background-color: var(--filter-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        .quote-repair-category h5 {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.75rem;
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            margin-top: 0;
+            font-weight: 600;
+        }
+        
+        .quote-repair-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.85rem 0;
+            border-bottom: 1px dashed #eee;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .quote-total {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: right;
+            background-color: var(--filter-bg);
+            padding: 1.5rem;
+            border-radius: 10px;
+        }
+        
+        /* Share Buttons */
+        .share-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .share-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+        }
+        
+        .share-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .whatsapp { background-color: #25D366; }
+        .facebook { background-color: #3b5998; }
+        .instagram { background-color: #E1306C; }
+        .twitter { background-color: #1DA1F2; }
+        .reddit { background-color: #FF5700; }
+        .email { background-color: #4285F4; }
+        .pdf { background-color: var(--secondary-color); }
+        
+        /* Quote Actions */
+        .quote-actions {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        /* Category Icons */
+        .category-icon {
+            margin-right: 10px;
+            color: var(--secondary-color);
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .estimate-container {
+                margin: 0.75rem;
+                border-radius: 0;
+            }
+            
+            .estimate-body {
+                padding: 1.25rem;
+            }
+            
+            .vehicle-filter {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .vehicle-filter .select-container {
+                width: 100%;
+            }
+            
+            .category-header h3 {
+                font-size: 1rem;
+            }
+            
+            .repair-item {
+                padding: 0.75rem;
+            }
+            
+            .repair-price {
+                min-width: 120px;
+                font-size: 0.9rem;
+            }
+            
+            .quote-header-invoice {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .quote-meta {
+                text-align: left;
+                margin-top: 1rem;
+            }
+            
+            .quote-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-cartocare {
+                width: 100%;
+                margin-bottom: 0.75rem;
+            }
+            
+            .share-buttons {
+                justify-content: center;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .quote-invoice, .quote-invoice * {
+                visibility: visible;
+            }
+            .quote-invoice {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+                border: none;
+                padding: 0;
+            }
+            
+            .quote-actions, .share-buttons {
+                display: none;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="estimate-container">
+        <div class="estimate-header">
+            <h1 style="font-size: 1.75rem;"><i class="fas fa-car me-2"></i>Vehicle Repair Estimate</h1>
+            <p class="mb-0" style="font-size: 1rem;">Get an accurate estimate for your vehicle repairs</p>
+        </div>
+        
+        <div class="estimate-body">
+            <!-- Compact Vehicle Filter -->
+            <div class="vehicle-filter">
+                <div class="select-container">
+                    <label for="country">Country</label>
+                    <div class="select-icon">
+                        <i class="fas fa-globe"></i>
+                        <select class="form-select" id="country" required>
+                            <option value="">Select Country</option>
+                            <option value="CN">China</option>
+                            <option value="US">United States</option>
+                            <option value="IN">India</option>
+                            <option value="JP">Japan</option>
+                            <option value="DE">Germany</option>
+                            <option value="BR">Brazil</option>
+                            <option value="GB">United Kingdom</option>
+                            <option value="FR">France</option>
+                            <option value="KR">South Korea</option>
+                            <option value="CA">Canada</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="select-container">
+                    <label for="vehicleMake">Make</label>
+                    <div class="select-icon">
+                        <i class="fas fa-car"></i>
+                        <select class="form-select" id="vehicleMake" required disabled>
+                            <option value="">Select Make</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="select-container">
+                    <label for="vehicleModel">Model</label>
+                    <div class="select-icon">
+                        <i class="fas fa-car-side"></i>
+                        <select class="form-select" id="vehicleModel" required disabled>
+                            <option value="">Select Model</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="select-container" id="variantSection" style="display: none;">
+                    <label for="vehicleVariant">Variant</label>
+                    <div class="select-icon">
+                        <i class="fas fa-cogs"></i>
+                        <select class="form-select" id="vehicleVariant" required>
+                            <option value="">Select Variant</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Repair Section (shown after variant selection) -->
+            <div id="repairSection" style="display: none;">
+                <h3 class="mb-4" style="font-size: 1.3rem;"><i class="fas fa-tools me-2"></i>Select Repairs Needed</h3>
+                <p style="font-size: 0.95rem; color: #6c757d;">Click on each category to view available repairs</p>
+                
+                <div id="repairCategories">
+                    <!-- Categories will be populated by JavaScript -->
+                </div>
+                
+                <!-- Selected Repairs -->
+                <div class="selected-repairs">
+                    <h3 style="font-size: 1.3rem;"><i class="fas fa-clipboard-list me-2"></i>Selected Repairs</h3>
+                    <div id="selectedRepairsList">
+                        <div class="no-repairs">No repairs selected yet</div>
+                    </div>
+                    <div class="total-estimate" id="totalEstimate" style="display: none;">
+                        Estimated Total: <span id="totalPrice">$0 - $0</span>
+                    </div>
+                </div>
+                
+                <!-- Generate Quote Button -->
+                <div class="d-grid mt-4" id="generateQuoteBtnContainer" style="display: none;">
+                    <button type="button" class="btn btn-cartocare" id="generateQuoteBtn">
+                        <i class="fas fa-file-invoice-dollar me-2"></i>Generate Quote
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quote Display -->
+            <div class="quote-section" id="quoteSection">
+                <div class="quote-invoice">
+                    <div class="quote-header-invoice">
+                        <div>
+                            <div class="quote-logo"><i class="fas fa-car-crash"></i></div>
+                            <h1 class="quote-title">Repair Estimate</h1>
+                        </div>
+                        <div class="quote-meta">
+                            <p><strong>Date:</strong> <span id="quoteDate"></span></p>
+                            <p><strong>Quote #:</strong> EST-<span id="quoteNumber"></span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="quote-details">
+                        <div class="quote-vehicle">
+                            <h4 style="font-size: 1.2rem;"><i class="fas fa-car me-2"></i>Vehicle Details</h4>
+                            <p><strong>Make:</strong> <span id="quoteMake"></span></p>
+                            <p><strong>Model:</strong> <span id="quoteModel"></span></p>
+                            <p><strong>Variant:</strong> <span id="quoteVariant"></span></p>
+                        </div>
+                        <div class="quote-summary">
+                            <h4 style="font-size: 1.2rem;"><i class="fas fa-clipboard-check me-2"></i>Summary</h4>
+                            <p><strong>Total Repairs:</strong> <span id="quoteRepairCount"></span></p>
+                            <p><strong>Estimated Total:</strong> <span id="quoteTotalPrice">$0 - $0</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="quote-repairs">
+                        <h4 style="font-size: 1.2rem;"><i class="fas fa-tools me-2"></i>Selected Repairs</h4>
+                        <div id="quoteRepairsList">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="quote-total">
+                        Total Estimate: <span id="quoteFinalPrice">$0 - $0</span>
+                    </div>
+                    
+                    <!-- Share Buttons -->
+                    <div class="share-section mt-4">
+                        <h5 style="font-size: 1.1rem; color: var(--primary-color);"><i class="fas fa-share-alt me-2"></i>Share This Estimate</h5>
+                        <div class="share-buttons">
+                            <a href="#" class="share-btn whatsapp" title="Share on WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                            <a href="#" class="share-btn facebook" title="Share on Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" class="share-btn instagram" title="Share on Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="share-btn twitter" title="Share on Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="share-btn reddit" title="Share on Reddit"><i class="fab fa-reddit-alien"></i></a>
+                            <a href="#" class="share-btn email" title="Share via Email"><i class="fas fa-envelope"></i></a>
+                            <button class="share-btn pdf" title="Save as PDF" onclick="window.print()"><i class="fas fa-file-pdf"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="quote-actions">
+                        <button class="btn btn-cartocare" onclick="resetForm()">
+                            <i class="fas fa-redo me-2"></i>New Estimate
+                        </button>
+                        <button class="btn btn-outline-cartocare" onclick="window.print()">
+                            <i class="fas fa-print me-2"></i>Print Estimate
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Complete repair database with all 13 categories and repairs
+        const repairDatabase = [
+            {
+                name: "Periodic Maintenance & Fluids",
+                icon: "fas fa-oil-can",
+                repairs: [
+                    { name: "Oil change", price: { min: 50, max: 100 } },
+                    { name: "Oil filter replacement", price: { min: 20, max: 50 } },
+                    { name: "Air filter replacement", price: { min: 20, max: 50 } },
+                    { name: "Cabin air filter", price: { min: 30, max: 70 } },
+                    { name: "Fuel filter replacement", price: { min: 50, max: 150 } },
+                    { name: "Spark plugs", price: { min: 100, max: 300 } },
+                    { name: "Coolant flush", price: { min: 70, max: 150 } },
+                    { name: "Transmission fluid change", price: { min: 100, max: 200 } },
+                    { name: "Brake fluid flush", price: { min: 80, max: 150 } },
+                    { name: "Power steering fluid top-up", price: { min: 40, max: 80 } },
+                    { name: "Windshield washer fluid", price: { min: 10, max: 20 } },
+                    { name: "Tire rotation", price: { min: 20, max: 50 } },
+                    { name: "Wheel balancing", price: { min: 50, max: 100 } },
+                    { name: "Battery testing", price: { min: 0, max: 20 } },
+                    { name: "Multi-point inspection", price: { min: 50, max: 100 } }
+                ]
+            },
+            {
+                name: "Engine System",
+                icon: "fas fa-car-alt",
+                repairs: [
+                    { name: "Timing belt/chain replacement", price: { min: 400, max: 900 } },
+                    { name: "Serpentine belt replacement", price: { min: 100, max: 250 } },
+                    { name: "Oil leak repair", price: { min: 200, max: 600 } },
+                    { name: "Head gasket replacement", price: { min: 1000, max: 2000 } },
+                    { name: "Valve cover gasket", price: { min: 150, max: 400 } },
+                    { name: "Engine mount replacement", price: { min: 200, max: 500 } },
+                    { name: "Intake manifold gasket", price: { min: 200, max: 500 } },
+                    { name: "Throttle body cleaning/replacement", price: { min: 100, max: 400 } },
+                    { name: "Turbocharger repair or replacement", price: { min: 500, max: 2000 } },
+                    { name: "Supercharger system repair", price: { min: 500, max: 2500 } },
+                    { name: "Cylinder head rebuild", price: { min: 800, max: 2000 } },
+                    { name: "Piston or ring issues", price: { min: 1000, max: 3000 } },
+                    { name: "Misfire diagnosis", price: { min: 100, max: 300 } },
+                    { name: "Idle control valve replacement", price: { min: 100, max: 300 } },
+                    { name: "Engine coolant sensor", price: { min: 80, max: 200 } },
+                    { name: "Knock sensor replacement", price: { min: 100, max: 300 } },
+                    { name: "Oil pressure sensor", price: { min: 80, max: 200 } },
+                    { name: "Fuel injector cleaning/replacement", price: { min: 100, max: 500 } }
+                ]
+            },
+            {
+                name: "Transmission & Drivetrain",
+                icon: "fas fa-cogs",
+                repairs: [
+                    { name: "Transmission fluid change", price: { min: 100, max: 200 } },
+                    { name: "Transmission flush", price: { min: 150, max: 300 } },
+                    { name: "Transmission replacement or rebuild", price: { min: 1500, max: 3500 } },
+                    { name: "Clutch replacement", price: { min: 500, max: 1200 } },
+                    { name: "Flywheel replacement", price: { min: 400, max: 900 } },
+                    { name: "Clutch master/slave cylinder", price: { min: 200, max: 500 } },
+                    { name: "Gearbox mount repair", price: { min: 100, max: 300 } },
+                    { name: "CV axle replacement", price: { min: 200, max: 500 } },
+                    { name: "U-joint replacement", price: { min: 150, max: 400 } },
+                    { name: "Differential repair", price: { min: 300, max: 800 } },
+                    { name: "Transfer case service (4WD/AWD)", price: { min: 200, max: 500 } },
+                    { name: "Driveshaft repair or replacement", price: { min: 300, max: 700 } },
+                    { name: "Transmission shift cable", price: { min: 100, max: 300 } },
+                    { name: "Transmission cooler line repair", price: { min: 100, max: 300 } }
+                ]
+            },
+            {
+                name: "Brakes",
+                icon: "fas fa-stopwatch",
+                repairs: [
+                    { name: "Brake pad replacement", price: { min: 100, max: 300 } },
+                    { name: "Brake rotor replacement/resurfacing", price: { min: 200, max: 400 } },
+                    { name: "Brake caliper replacement", price: { min: 300, max: 600 } },
+                    { name: "Brake line/hoses replacement", price: { min: 150, max: 350 } },
+                    { name: "ABS sensor replacement", price: { min: 100, max: 250 } },
+                    { name: "Brake master cylinder", price: { min: 200, max: 500 } },
+                    { name: "Brake booster", price: { min: 300, max: 700 } },
+                    { name: "Brake fluid flush", price: { min: 80, max: 150 } },
+                    { name: "Parking brake adjustment/repair", price: { min: 100, max: 300 } },
+                    { name: "Drum brake shoe replacement", price: { min: 150, max: 350 } },
+                    { name: "Brake proportioning valve repair", price: { min: 100, max: 250 } },
+                    { name: "Electronic parking brake faults", price: { min: 200, max: 500 } }
+                ]
+            },
+            {
+                name: "Suspension & Steering",
+                icon: "fas fa-car-side",
+                repairs: [
+                    { name: "Shock absorber replacement", price: { min: 200, max: 500 } },
+                    { name: "Strut assembly replacement", price: { min: 300, max: 700 } },
+                    { name: "Control arm replacement", price: { min: 200, max: 600 } },
+                    { name: "Ball joint replacement", price: { min: 150, max: 400 } },
+                    { name: "Tie rod end replacement", price: { min: 100, max: 300 } },
+                    { name: "Sway bar link/bushing", price: { min: 100, max: 250 } },
+                    { name: "Wheel bearing replacement", price: { min: 200, max: 500 } },
+                    { name: "Steering rack and pinion", price: { min: 400, max: 900 } },
+                    { name: "Power steering pump", price: { min: 300, max: 700 } },
+                    { name: "Power steering hose/leak", price: { min: 150, max: 350 } },
+                    { name: "Alignment (toe/camber adjustment)", price: { min: 80, max: 150 } },
+                    { name: "Steering knuckle replacement", price: { min: 200, max: 500 } },
+                    { name: "Coil spring replacement", price: { min: 200, max: 500 } },
+                    { name: "Air suspension repair", price: { min: 500, max: 1500 } },
+                    { name: "Steering column issues", price: { min: 300, max: 800 } }
+                ]
+            },
+            {
+                name: "Radiator & Cooling System",
+                icon: "fas fa-temperature-high",
+                repairs: [
+                    { name: "Radiator replacement", price: { min: 300, max: 700 } },
+                    { name: "Thermostat replacement", price: { min: 100, max: 250 } },
+                    { name: "Water pump replacement", price: { min: 200, max: 500 } },
+                    { name: "Coolant flush", price: { min: 70, max: 150 } },
+                    { name: "Radiator hose replacement", price: { min: 100, max: 250 } },
+                    { name: "Heater core repair/replacement", price: { min: 400, max: 900 } },
+                    { name: "Overflow tank replacement", price: { min: 100, max: 250 } },
+                    { name: "Cooling fan repair", price: { min: 150, max: 350 } },
+                    { name: "Temperature sensor replacement", price: { min: 80, max: 200 } }
+                ]
+            },
+            {
+                name: "Battery & Electrical System",
+                icon: "fas fa-bolt",
+                repairs: [
+                    { name: "Battery replacement", price: { min: 100, max: 300 } },
+                    { name: "Alternator replacement", price: { min: 300, max: 700 } },
+                    { name: "Starter motor replacement", price: { min: 200, max: 500 } },
+                    { name: "Spark plug replacement", price: { min: 100, max: 300 } },
+                    { name: "Spark plug wires/coil packs", price: { min: 150, max: 350 } },
+                    { name: "Fuse replacement", price: { min: 20, max: 50 } },
+                    { name: "Relay replacement", price: { min: 50, max: 100 } },
+                    { name: "Ignition switch", price: { min: 100, max: 300 } },
+                    { name: "Wiring harness repairs", price: { min: 200, max: 600 } },
+                    { name: "ECU (Engine Control Unit) diagnostics", price: { min: 100, max: 300 } },
+                    { name: "Crankshaft position sensor", price: { min: 100, max: 250 } },
+                    { name: "Camshaft position sensor", price: { min: 100, max: 250 } },
+                    { name: "Battery terminals and cables", price: { min: 50, max: 150 } },
+                    { name: "Ground wire corrosion repair", price: { min: 50, max: 150 } },
+                    { name: "Interior light failures", price: { min: 50, max: 150 } },
+                    { name: "Instrument cluster issues", price: { min: 200, max: 500 } }
+                ]
+            },
+            {
+                name: "HVAC (Heating, Ventilation, AC)",
+                icon: "fas fa-wind",
+                repairs: [
+                    { name: "AC compressor replacement", price: { min: 500, max: 1200 } },
+                    { name: "AC condenser replacement", price: { min: 400, max: 900 } },
+                    { name: "AC recharge", price: { min: 100, max: 250 } },
+                    { name: "Heater blower motor", price: { min: 150, max: 350 } },
+                    { name: "Blower motor resistor", price: { min: 100, max: 250 } },
+                    { name: "Cabin air filter replacement", price: { min: 30, max: 70 } },
+                    { name: "HVAC actuator (blend door)", price: { min: 150, max: 350 } },
+                    { name: "AC evaporator core", price: { min: 500, max: 1200 } },
+                    { name: "Heater control panel", price: { min: 200, max: 500 } },
+                    { name: "AC pressure sensor", price: { min: 100, max: 250 } }
+                ]
+            },
+            {
+                name: "Lighting & Visibility",
+                icon: "fas fa-lightbulb",
+                repairs: [
+                    { name: "Headlight bulb replacement", price: { min: 20, max: 100 } },
+                    { name: "Headlight assembly replacement", price: { min: 200, max: 600 } },
+                    { name: "Tail light/brake light bulb", price: { min: 20, max: 80 } },
+                    { name: "Tail light housing", price: { min: 100, max: 300 } },
+                    { name: "Fog light installation", price: { min: 100, max: 300 } },
+                    { name: "Turn signal repair", price: { min: 50, max: 150 } },
+                    { name: "Reverse light issues", price: { min: 50, max: 150 } },
+                    { name: "High-beam switch", price: { min: 50, max: 150 } },
+                    { name: "Windshield wiper blade replacement", price: { min: 20, max: 50 } },
+                    { name: "Windshield washer pump", price: { min: 50, max: 150 } },
+                    { name: "Wiper motor replacement", price: { min: 100, max: 300 } },
+                    { name: "Headlight motor (pop-up lights)", price: { min: 150, max: 350 } }
+                ]
+            },
+            {
+                name: "Diagnostics & Sensors",
+                icon: "fas fa-search",
+                repairs: [
+                    { name: "Check Engine Light diagnosis", price: { min: 50, max: 150 } },
+                    { name: "OBD-II code scan", price: { min: 0, max: 50 } },
+                    { name: "ABS diagnostics", price: { min: 80, max: 200 } },
+                    { name: "TPMS sensor replacement", price: { min: 50, max: 150 } },
+                    { name: "Speed sensor replacement", price: { min: 100, max: 250 } },
+                    { name: "MAP sensor replacement", price: { min: 100, max: 250 } },
+                    { name: "MAF sensor cleaning/replacement", price: { min: 100, max: 250 } },
+                    { name: "Fuel pressure sensor", price: { min: 100, max: 250 } },
+                    { name: "ECT (coolant temp) sensor", price: { min: 80, max: 200 } },
+                    { name: "Throttle position sensor (TPS)", price: { min: 100, max: 250 } },
+                    { name: "Onboard computer reset", price: { min: 50, max: 150 } },
+                    { name: "Reprogram ECU/TCU", price: { min: 100, max: 300 } }
+                ]
+            },
+            {
+                name: "Safety & Security (Airbag)",
+                icon: "fas fa-shield-alt",
+                repairs: [
+                    { name: "Airbag light diagnostics", price: { min: 100, max: 250 } },
+                    { name: "Airbag replacement", price: { min: 500, max: 1500 } },
+                    { name: "Seat belt retractor repair", price: { min: 150, max: 350 } },
+                    { name: "Traction control sensor", price: { min: 100, max: 250 } },
+                    { name: "ESC (stability control) issues", price: { min: 150, max: 350 } },
+                    { name: "Parking sensors", price: { min: 100, max: 300 } },
+                    { name: "Backup camera installation", price: { min: 200, max: 500 } },
+                    { name: "Blind spot monitoring sensors", price: { min: 200, max: 500 } },
+                    { name: "Car alarm/fob replacement", price: { min: 100, max: 300 } },
+                    { name: "Immobilizer/key reprogramming", price: { min: 100, max: 300 } },
+                    { name: "Crash sensor reset", price: { min: 100, max: 250 } }
+                ]
+            },
+            {
+                name: "Exhaust System",
+                icon: "fas fa-smog",
+                repairs: [
+                    { name: "Muffler replacement", price: { min: 200, max: 500 } },
+                    { name: "Exhaust pipe replacement", price: { min: 150, max: 400 } },
+                    { name: "Catalytic converter replacement", price: { min: 500, max: 2000 } },
+                    { name: "Exhaust manifold repair", price: { min: 300, max: 700 } },
+                    { name: "Oxygen (O2) sensor replacement", price: { min: 100, max: 250 } },
+                    { name: "EGR valve replacement", price: { min: 150, max: 350 } },
+                    { name: "DPF cleaning or replacement (diesel)", price: { min: 500, max: 1500 } },
+                    { name: "Exhaust gasket replacement", price: { min: 50, max: 150 } },
+                    { name: "Tailpipe welding/repair", price: { min: 100, max: 300 } },
+                    { name: "Secondary air injection pump", price: { min: 200, max: 500 } }
+                ]
+            },
+            {
+                name: "Body, Doors & Windows",
+                icon: "fas fa-car-crash",
+                repairs: [
+                    { name: "Door lock actuator", price: { min: 100, max: 300 } },
+                    { name: "Power window motor/regulator", price: { min: 150, max: 400 } },
+                    { name: "Window switch replacement", price: { min: 50, max: 150 } },
+                    { name: "Exterior mirror replacement", price: { min: 100, max: 300 } },
+                    { name: "Interior door handle", price: { min: 50, max: 150 } },
+                    { name: "Door hinge repair", price: { min: 100, max: 250 } },
+                    { name: "Weather stripping replacement", price: { min: 100, max: 300 } },
+                    { name: "Sunroof/moonroof repair", price: { min: 200, max: 600 } },
+                    { name: "Windshield replacement", price: { min: 200, max: 500 } },
+                    { name: "Bumper repair/replacement", price: { min: 300, max: 1000 } },
+                    { name: "Hood latch repair", price: { min: 100, max: 250 } },
+                    { name: "Trunk latch/struts", price: { min: 100, max: 300 } },
+                    { name: "Paint touch-up/scratch repair", price: { min: 100, max: 500 } },
+                    { name: "Rust repair", price: { min: 200, max: 1000 } },
+                    { name: "Dent removal", price: { min: 50, max: 300 } }
+                ]
+            }
+        ];
+
+        // Sample vehicle data with variants
+        const vehicleData = {
+            makes: ["Toyota", "Honda", "Ford", "Chevrolet", "Nissan", "Hyundai", "Kia", "Subaru", "Jeep", "BMW"],
+            models: {
+                "Toyota": ["Camry", "Corolla", "RAV4", "Highlander", "Tacoma", "Sienna"],
+                "Honda": ["Accord", "Civic", "CR-V", "Pilot", "Odyssey"],
+                "Ford": ["F-150", "Escape", "Explorer", "Mustang", "Focus"],
+                "Chevrolet": ["Silverado", "Equinox", "Malibu", "Tahoe", "Camaro"],
+                "Nissan": ["Altima", "Rogue", "Sentra", "Pathfinder", "Frontier"],
+                "Hyundai": ["Elantra", "Tucson", "Santa Fe", "Sonata", "Palisade"],
+                "Kia": ["Sorento", "Sportage", "Forte", "Telluride", "Soul"],
+                "Subaru": ["Outback", "Forester", "Crosstrek", "Ascent", "Impreza"],
+                "Jeep": ["Grand Cherokee", "Wrangler", "Cherokee", "Compass", "Renegade"],
+                "BMW": ["3 Series", "5 Series", "X3", "X5", "X1"]
+            },
+            variants: {
+                "Toyota": {
+                    "Camry": ["LE", "SE", "XLE", "XSE", "TRD"],
+                    "Corolla": ["L", "LE", "SE", "XLE", "XSE"],
+                    "RAV4": ["LE", "XLE", "XLE Premium", "Adventure", "TRD Off-Road"],
+                    "Sienna":['kaif']
+                },
+                "Honda": {
+                    "Accord": ["LX", "Sport", "EX", "EX-L", "Touring"],
+                    "Civic": ["LX", "Sport", "EX", "EX-L", "Touring"],
+                    "CR-V": ["LX", "EX", "EX-L", "Touring"]
+                },
+                "Ford": {
+                    "F-150": ["XL", "XLT", "Lariat", "King Ranch", "Platinum"],
+                    "Escape": ["S", "SE", "SEL", "Titanium"],
+                    "Mustang": ["EcoBoost", "EcoBoost Premium", "GT", "GT Premium"]
+                },
+                "Chevrolet": {
+                    "Silverado": ["Work Truck", "LT", "RST", "LTZ", "High Country"],
+                    "Equinox": ["L", "LS", "LT", "Premier"],
+                    "Malibu": ["L", "LS", "LT", "Premier"]
+                },
+                "Nissan": {
+                    "Altima": ["S", "SV", "SR", "SL", "Platinum"],
+                    "Rogue": ["S", "SV", "SL", "Platinum"],
+                    "Sentra": ["S", "SV", "SR", "Premium"]
+                }
+            }
+        };
+
+        // Currency data
+        const currencyData = {
+            "CN": { symbol: "¥", code: "CNY", conversion: 7.2 },
+            "US": { symbol: "$", code: "USD", conversion: 1 },
+            "IN": { symbol: "₹", code: "INR", conversion: 83.5 },
+            "JP": { symbol: "¥", code: "JPY", conversion: 151.5 },
+            "DE": { symbol: "€", code: "EUR", conversion: 0.93 },
+            "BR": { symbol: "R$", code: "BRL", conversion: 5.1 },
+            "GB": { symbol: "£", code: "GBP", conversion: 0.8 },
+            "FR": { symbol: "€", code: "EUR", conversion: 0.93 },
+            "KR": { symbol: "₩", code: "KRW", conversion: 1345 },
+            "CA": { symbol: "CA$", code: "CAD", conversion: 1.36 }
+        };
+
+        // Global variables
+        let selectedRepairs = [];
+        let currentCurrency = currencyData["US"]; // Default to USD
+
+        // Initialize the form
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners for country selection
+            document.getElementById('country').addEventListener('change', function() {
+                if (!this.value) return;
+                
+                // Reset all sections when country changes
+                resetForm();
+                
+                // Set new currency
+                currentCurrency = currencyData[this.value] || currencyData["US"];
+                
+                // Enable make selection
+                const makeSelect = document.getElementById('vehicleMake');
+                makeSelect.disabled = false;
+                
+                // Populate makes
+                makeSelect.innerHTML = '<option value="">Select Make</option>';
+                vehicleData.makes.forEach(make => {
+                    const option = document.createElement('option');
+                    option.value = make;
+                    option.textContent = make;
+                    makeSelect.appendChild(option);
+                });
+            });
+            
+            document.getElementById('vehicleMake').addEventListener('change', function() {
+                const modelSelect = document.getElementById('vehicleModel');
+                modelSelect.disabled = !this.value;
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
+                
+                if (this.value && vehicleData.models[this.value]) {
+                    vehicleData.models[this.value].forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = model;
+                        modelSelect.appendChild(option);
+                    });
+                }
+                
+                // Hide variant section until model is selected
+                document.getElementById('variantSection').style.display = 'none';
+                document.getElementById('repairSection').style.display = 'none';
+                document.getElementById('generateQuoteBtnContainer').style.display = 'none';
+            });
+            
+            document.getElementById('vehicleModel').addEventListener('change', function() {
+                const make = document.getElementById('vehicleMake').value;
+                const variantSection = document.getElementById('variantSection');
+                const variantSelect = document.getElementById('vehicleVariant');
+                
+                if (this.value && vehicleData.variants[make] && vehicleData.variants[make][this.value]) {
+                    variantSection.style.display = 'block';
+                    variantSelect.innerHTML = '<option value="">Select Variant</option>';
+                    
+                    vehicleData.variants[make][this.value].forEach(variant => {
+                        const option = document.createElement('option');
+                        option.value = variant;
+                        option.textContent = variant;
+                        variantSelect.appendChild(option);
+                    });
+                } else {
+                    variantSection.style.display = 'none';
+                    // If no variants, show repair section directly
+                    if (this.value) {
+                        document.getElementById('repairSection').style.display = 'block';
+                        populateRepairCategories();
+                    }
+                }
+                
+                document.getElementById('repairSection').style.display = 'none';
+                document.getElementById('generateQuoteBtnContainer').style.display = 'none';
+            });
+            
+            document.getElementById('vehicleVariant').addEventListener('change', function() {
+                if (this.value) {
+                    // Show repair section when variant is selected
+                    document.getElementById('repairSection').style.display = 'block';
+                    
+                    // Populate repair categories if not already done
+                    if (document.getElementById('repairCategories').children.length === 0) {
+                        populateRepairCategories();
+                    }
+                    
+                    // Scroll to repair section
+                    document.getElementById('repairSection').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                } else {
+                    document.getElementById('repairSection').style.display = 'none';
+                    document.getElementById('generateQuoteBtnContainer').style.display = 'none';
+                }
+            });
+            
+            // Generate quote button
+            document.getElementById('generateQuoteBtn').addEventListener('click', generateQuote);
+            
+            // Setup share buttons
+            setupShareButtons();
+        });
+        
+        function setupShareButtons() {
+            const quoteUrl = window.location.href;
+            const quoteTitle = "Vehicle Repair Estimate from CartoCare";
+            
+            // WhatsApp
+            document.querySelector('.share-btn.whatsapp').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open(`https://wa.me/?text=${encodeURIComponent(quoteTitle + ' ' + quoteUrl)}`, '_blank');
+            });
+            
+            // Facebook
+            document.querySelector('.share-btn.facebook').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(quoteUrl)}`, '_blank');
+            });
+            
+            // Instagram (note: Instagram doesn't have direct sharing, this would open the app)
+            document.querySelector('.share-btn.instagram').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open(`https://www.instagram.com/`, '_blank');
+            });
+            
+            // Twitter/X
+            document.querySelector('.share-btn.twitter').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(quoteTitle)}&url=${encodeURIComponent(quoteUrl)}`, '_blank');
+            });
+            
+            // Reddit
+            document.querySelector('.share-btn.reddit').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.open(`https://www.reddit.com/submit?url=${encodeURIComponent(quoteUrl)}&title=${encodeURIComponent(quoteTitle)}`, '_blank');
+            });
+            
+            // Email
+            document.querySelector('.share-btn.email').addEventListener('click', function(e) {
+                e.preventDefault();
+                const subject = "Vehicle Repair Estimate from CartoCare";
+                const body = `Check out this repair estimate I created: ${quoteUrl}`;
+                window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+            });
+        }
+        
+        function populateRepairCategories() {
+            const categoriesDiv = document.getElementById('repairCategories');
+            categoriesDiv.innerHTML = '';
+            
+            repairDatabase.forEach(category => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'category-card';
+                categoryDiv.innerHTML = `
+                    <div class="category-header">
+                        <h3><i class="${category.icon} category-icon"></i>${category.name}</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="category-content">
+                        ${category.repairs.map(repair => `
+                            <div class="repair-item" data-repair="${repair.name}">
+                                <div class="form-check">
+                                    <input class="form-check-input repair-checkbox" type="checkbox" id="${repair.name.replace(/\s+/g, '-')}">
+                                    <label class="form-check-label" for="${repair.name.replace(/\s+/g, '-')}">${repair.name}</label>
+                                </div>
+                                <div class="repair-price">${currentCurrency.symbol}${Math.round(repair.price.min * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(repair.price.max * currentCurrency.conversion)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                categoriesDiv.appendChild(categoryDiv);
+                
+                // Add click event to category header
+                const header = categoryDiv.querySelector('.category-header');
+                const content = categoryDiv.querySelector('.category-content');
+                const icon = categoryDiv.querySelector('.fa-chevron-down');
+                
+                header.addEventListener('click', function() {
+                    content.classList.toggle('show');
+                    icon.classList.toggle('fa-chevron-up');
+                    icon.classList.toggle('fa-chevron-down');
+                    header.classList.toggle('active');
+                });
+            });
+            
+            // Add event listeners to checkboxes (delegated)
+            document.addEventListener('change', function(e) {
+                if (e.target.classList.contains('repair-checkbox')) {
+                    const repairName = e.target.closest('.repair-item').getAttribute('data-repair');
+                    const category = repairDatabase.find(cat => 
+                        cat.repairs.some(rep => rep.name === repairName)
+                    );
+                    const repairItem = category.repairs.find(r => r.name === repairName);
+                    
+                    if (e.target.checked) {
+                        selectedRepairs.push({
+                            name: repairName,
+                            price: repairItem.price,
+                            category: category.name
+                        });
+                    } else {
+                        selectedRepairs = selectedRepairs.filter(r => r.name !== repairName);
+                    }
+                    
+                    updateSelectedRepairsList();
+                    
+                    // Show/hide generate quote button based on selected repairs
+                    document.getElementById('generateQuoteBtnContainer').style.display = 
+                        selectedRepairs.length > 0 ? 'block' : 'none';
+                }
+            });
+        }
+        
+        // Update the selected repairs list
+        function updateSelectedRepairsList() {
+            const listDiv = document.getElementById('selectedRepairsList');
+            const totalDiv = document.getElementById('totalEstimate');
+            
+            if (selectedRepairs.length === 0) {
+                listDiv.innerHTML = '<div class="no-repairs">No repairs selected yet</div>';
+                totalDiv.style.display = 'none';
+                document.getElementById('generateQuoteBtnContainer').style.display = 'none';
+                return;
+            }
+            
+            let html = '';
+            let totalMin = 0;
+            let totalMax = 0;
+            
+            // Group by category
+            const repairsByCategory = {};
+            selectedRepairs.forEach(repair => {
+                if (!repairsByCategory[repair.category]) {
+                    repairsByCategory[repair.category] = [];
+                }
+                repairsByCategory[repair.category].push(repair);
+                
+                totalMin += repair.price.min;
+                totalMax += repair.price.max;
+            });
+            
+            // Add repairs grouped by category
+            for (const category in repairsByCategory) {
+                const categoryData = repairDatabase.find(c => c.name === category);
+                html += `<div><strong><i class="${categoryData.icon} me-2"></i>${category}</strong></div>`;
+                repairsByCategory[category].forEach(repair => {
+                    html += `
+                        <div class="selected-item">
+                            <span>${repair.name}</span>
+                            <span class="repair-price">${currentCurrency.symbol}${Math.round(repair.price.min * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(repair.price.max * currentCurrency.conversion)}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            listDiv.innerHTML = html;
+            document.getElementById('totalPrice').textContent = `${currentCurrency.symbol}${Math.round(totalMin * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(totalMax * currentCurrency.conversion)}`;
+            totalDiv.style.display = 'block';
+        }
+        
+        // Generate the quote
+        function generateQuote() {
+            const country = document.getElementById('country');
+            const make = document.getElementById('vehicleMake').value;
+            const model = document.getElementById('vehicleModel').value;
+            const variant = document.getElementById('vehicleVariant').value;
+            
+            // Update quote information
+            document.getElementById('quoteMake').textContent = make;
+            document.getElementById('quoteModel').textContent = model;
+            document.getElementById('quoteVariant').textContent = variant || "N/A";
+            document.getElementById('quoteRepairCount').textContent = selectedRepairs.length;
+            
+            // Format today's date
+            const today = new Date();
+            document.getElementById('quoteDate').textContent = today.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            // Generate random quote number
+            document.getElementById('quoteNumber').textContent = Math.floor(1000 + Math.random() * 9000);
+            
+            // Populate repairs list
+            const repairsList = document.getElementById('quoteRepairsList');
+            repairsList.innerHTML = '';
+            
+            let totalMin = 0;
+            let totalMax = 0;
+            
+            // Group by category
+            const repairsByCategory = {};
+            selectedRepairs.forEach(repair => {
+                if (!repairsByCategory[repair.category]) {
+                    repairsByCategory[repair.category] = [];
+                }
+                repairsByCategory[repair.category].push(repair);
+                
+                totalMin += repair.price.min;
+                totalMax += repair.price.max;
+            });
+            
+            // Add repairs grouped by category
+            for (const category in repairsByCategory) {
+                const categoryData = repairDatabase.find(c => c.name === category);
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'quote-repair-category';
+                categoryDiv.innerHTML = `<h5><i class="${categoryData.icon} me-2"></i>${category}</h5>`;
+                
+                const categoryList = document.createElement('div');
+                repairsByCategory[category].forEach(repair => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'quote-repair-item';
+                    itemDiv.innerHTML = `
+                        <span>${repair.name}</span>
+                        <span class="repair-price">${currentCurrency.symbol}${Math.round(repair.price.min * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(repair.price.max * currentCurrency.conversion)}</span>
+                    `;
+                    categoryList.appendChild(itemDiv);
+                });
+                
+                categoryDiv.appendChild(categoryList);
+                repairsList.appendChild(categoryDiv);
+            }
+            
+            // Update totals
+            document.getElementById('quoteTotalPrice').textContent = 
+                `${currentCurrency.symbol}${Math.round(totalMin * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(totalMax * currentCurrency.conversion)}`;
+            document.getElementById('quoteFinalPrice').textContent = 
+                `${currentCurrency.symbol}${Math.round(totalMin * currentCurrency.conversion)} - ${currentCurrency.symbol}${Math.round(totalMax * currentCurrency.conversion)}`;
+            
+            // Show the quote section
+            document.getElementById('quoteSection').style.display = 'block';
+            
+            // Scroll to quote
+            document.getElementById('quoteSection').scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+        
+        // Reset form
+        function resetForm() {
+            // Reset vehicle selection
+            document.getElementById('vehicleMake').value = '';
+            document.getElementById('vehicleMake').disabled = true;
+            document.getElementById('vehicleModel').value = '';
+            document.getElementById('vehicleModel').disabled = true;
+            document.getElementById('vehicleVariant').value = '';
+            document.getElementById('variantSection').style.display = 'none';
+            
+            // Hide repair section
+            document.getElementById('repairSection').style.display = 'none';
+            
+            // Uncheck all repair checkboxes
+            document.querySelectorAll('.repair-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset selected repairs
+            selectedRepairs = [];
+            updateSelectedRepairsList();
+            
+            // Hide quote section
+            document.getElementById('quoteSection').style.display = 'none';
+            document.getElementById('generateQuoteBtnContainer').style.display = 'none';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}

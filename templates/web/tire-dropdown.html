@@ -37,6 +37,7 @@
   }
   .text-drop{
     margin-top:120px;
+    margin-bottom:20px;
   }
   .para-drop{
     text-align: justify;
@@ -65,12 +66,44 @@
     font-size:20px;
     color: rgb(215, 5, 5);
   }
-  .fa-plus:hover{
-
-    transform:rotate(360deg);
+ 
+  .top-para{
+    background-color:#fffdfd;
   }
+   .accordion {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.accordion-header {
+ background-color: #fffcfc;
+  padding: 15px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom:  1px solid #ccc;
+}
+
+.accordion-content {
+  display: none;
+  padding: 15px 20px;
+  border: px solid #ccc;
+  border-top: none;
+}
+.icon{
+  color:red;
+  font-size:30px;
+}
+
+.accordion-header.active .icon {
+  transform: rotate(45deg);
+}
+
  </style>
-  <img src="{% static 'image/banner/for tyre size.png' %}" alt="ESP Safety" class="hero-image2 >
+  <img src="{% static 'image/banner/for tyre size.png' %}" alt="ESP Safety" class="hero-image2 ">
  <div class="main-container">
    
 <div class="container car-container mt-2 ">
@@ -81,7 +114,7 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th colspan="2" class="center text-center car-no">{{tire.name}} </th>
+          <th colspan="2" class="center text-center car-no">{{tire.width}}/{{tire.profile}} {{tire.load}} {{tire.rim}} {{tire.speed}}   </th>
         </tr>
       </thead>
       <tbody class="w-40">
@@ -108,7 +141,7 @@
       </tbody>
     </table>
   </div>
-<p class="para-size  container col-5"><span class="spaning-2">Maruti Wagon R LXI</span>  comes with <span class="spaning "> 145/80 R13 75T </span> tyres as standard OEM fitment, ensuring optimal 
+<p class="para-size  container col-5"><span class="spaning-2">{{tire.company}}</span> comes with <span class="spaning ">{{tire.width}}/{{tire.profile}} {{tire.load}} {{tire.rim}} {{tire.speed}} </span> tyres as standard OEM fitment, ensuring optimal 
 performance, comfort, and safety. These tyres are specifically designed to match the vehicle's 
 specifications, providing a smooth and efficient driving experience.</p>
 
@@ -116,14 +149,19 @@ specifications, providing a smooth and efficient driving experience.</p>
 
 
 
-<div class="container  text-drop col-7">
-  <h2 class="container size-color">TYRE SIZES EXPLAINED<i class="fa-solid fa-plus"></i></h2>
-  <p class="para-drop">When it comes to tyres, understanding the various specifications is crucial for 
+<div class="container    text-drop col-7">
+  <h2 class="container size-color">TYRE SIZES EXPLAINED<div class="accordion"></h2>
+<div class="accordion ">
+  <div class="accordion-item">
+    <div class="accordion-header top-para" onclick="toggleAccordion(this)">
+      <span><p class="para-drop container">When it comes to tyres, understanding the various specifications is crucial for 
 optimal performance, safety, and fuel efficiency. In this guide, we'll break down 
 the key components of tyre specifications, helping you make informed 
-decisions when purchasing new tyres  . </p>
-
-<div class="para-header">
+decisions when purchasing new tyres  . </p></span>
+      <span class="icon">+</span>
+    </div>
+    <div class="accordion-content">
+    <div class="para-header">
 <p class="para-subdrop"><span class="span-head">Width : </span> The tyre's width is represented by the first three digits on the sidewall. A 
 wider tyre provides better grip, but may increase road noise. </p>
 <p class="para-subdrop"><span class="span-head">Profile (Aspect Ratio) :</span>  The aspect ratio  is calculated by dividing the sidewall height 
@@ -144,20 +182,29 @@ enables you to continue your journey with a flat tyre for up to 40-50 miles at u
 miles an hour.</p>
 </div>
 </div>
+    </div>
+  </div>
 </div>
-<script>
-let plusIcon = document.querySelector('.fa-plus');
+   
 
-plusIcon.addEventListener('click', function() {
-    let paraHeader = document.querySelector('.para-header');
-    if (paraHeader.style.display === 'none' || paraHeader.style.display === '') {
-        paraHeader.style.display = 'block';
-        plusIcon.style.transform = 'rotate(360deg)';
-    } else {
-        paraHeader.style.display = 'none';
-        plusIcon.style.transform = 'rotate(0deg)';
-    }
-});
+ 
+
+
+  
+<script>
+function toggleAccordion(header) {
+  const content = header.nextElementSibling;
+  const isOpen = content.style.display === "block";
+
+  // Close all accordions (optional for single open behavior)
+  document.querySelectorAll('.accordion-content').forEach(el => el.style.display = "none");
+  document.querySelectorAll('.accordion-header').forEach(el => el.classList.remove("active"));
+
+  if (!isOpen) {
+    content.style.display = "block";
+    header.classList.add("active");
+  }
+}
 
 </script>
 {% endblock content %}
